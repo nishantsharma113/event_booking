@@ -45821,7 +45821,7 @@ return new A.u1(new A.as0(s),A.bM(A.b6(new A.c0(Date.now(),0,!1)),A.bu(new A.c0(
 $S:276}
 A.RL.prototype={
 H(a){var s=null
-return new A.wI(A.aYU(a),"Booking System",A.yf(s,A.aOO(B.ab,s,s,B.OZ),s),!1,s)}}
+return new A.wI(A.aYU(a),"Event Booking",A.yf(s,A.aOO(B.ab,s,s,B.OZ),s),!1,s)}}
 A.kS.prototype={
 gcA(a){return this.a}}
 A.n1.prototype={
