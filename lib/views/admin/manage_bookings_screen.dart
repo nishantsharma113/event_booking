@@ -32,7 +32,7 @@ class ManageBookingsScreen extends StatelessWidget {
                     DataCell(Text('#${b.id.substring(0, 6)}')),
                     DataCell(Text(b.turfId)),
                     DataCell(Text(b.userId)),
-                    DataCell(Text(b.createdAt?.toString().substring(0, 19) ?? '-')),
+                    DataCell(Text(b.bookedAt?.toString().substring(0, 19) ?? '-')),
                     DataCell(Text(b.status)),
                     DataCell(Row(children: [
                       TextButton(onPressed: () => prov.approve(b.id), child: const Text('Approve')),

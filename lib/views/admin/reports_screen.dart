@@ -280,8 +280,8 @@ String _buildBookingsCsv(BookingProvider? bookingProv, {String statusFilter = 'A
     for (final b in bookingProv.bookings) {
       if (statusFilter != 'All' && b.status != statusFilter) continue;
       if (turfIdFilter != 'All' && b.turfId != turfIdFilter) continue;
-      if (from != null && (b.createdAt == null || b.createdAt!.isBefore(from))) continue;
-      if (to != null && (b.createdAt == null || b.createdAt!.isAfter(DateTime(to.year, to.month, to.day, 23, 59, 59)))) continue;
+      if (from != null && (b.bookedAt == null || b.bookedAt!.isBefore(from))) continue;
+      if (to != null && (b.bookedAt == null || b.bookedAt!.isAfter(DateTime(to.year, to.month, to.day, 23, 59, 59)))) continue;
       rows.add('${b.id},${b.turfId},${b.userId},${b.slotId},${b.status},${b.totalPrice}');
     }
   }

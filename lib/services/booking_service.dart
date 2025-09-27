@@ -3,6 +3,22 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/booking.dart';
 
 class BookingService {
+  Future<void> createBooking({
+    required String turfId,
+    required String userId,
+    required String slotId,
+    required double totalPrice,
+  }) async {
+    await supabase.from('bookings').insert({
+      'turf_id': turfId,
+      'user_id': userId,
+      'slot_id': slotId,
+      'status': 'confirmed',
+      'total_price': totalPrice,
+      'booked_at': DateTime.now().toIso8601String(),
+    });
+  }
+
   final supabase = Supabase.instance.client;
 
   Future<List<Booking>> fetchBookings() async {
@@ -10,7 +26,10 @@ class BookingService {
     return (data as List).map((e) => Booking.fromJson(e)).toList();
   }
 
-  Future<void> updateStatus({required String id, required String status}) async {
+  Future<void> updateStatus({
+    required String id,
+    required String status,
+  }) async {
     await supabase.from('bookings').update({'status': status}).eq('id', id);
   }
 
@@ -30,12 +49,15 @@ class BookingService {
   }
 
   Future<List<double>> monthlyRevenueLast12() async {
-    final data = await supabase.from('bookings').select('total_price, created_at');
+    final data = await supabase
+        .from('bookings')
+        .select('total_price, booked_at');
     final now = DateTime.now();
     final buckets = List<double>.filled(12, 0);
     for (final row in (data as List)) {
-      final created = DateTime.parse(row['created_at']);
-      final diffMonths = (now.year - created.year) * 12 + (now.month - created.month);
+      final booked = DateTime.parse(row['booked_at']);
+      final diffMonths =
+          (now.year - booked.year) * 12 + (now.month - booked.month);
       if (diffMonths >= 0 && diffMonths < 12) {
         final idx = 11 - diffMonths;
         buckets[idx] += (row['total_price'] as num).toDouble();

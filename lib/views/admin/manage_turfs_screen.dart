@@ -54,44 +54,63 @@ class ManageTurfsScreen extends StatelessWidget {
                   ],
                   rows: [
                     for (final t in provider.turfs)
-                      DataRow(cells: [
-                        DataCell(Text(t.name)),
-                        DataCell(Text(t.location)),
-                        DataCell(Text('₹${t.pricePerHour.toStringAsFixed(0)}')),
-                        DataCell(Row(children: [
-                          IconButton(
-                            onPressed: () async {
-                              final updated = await showDialog<Turf>(
-                                context: context,
-                                builder: (context) => _TurfDialog(existing: t),
-                              );
-                              if (updated != null) {
-                                await provider.updateTurfItem(updated);
-                              }
-                            },
-                            icon: const Icon(Icons.edit),
+                      DataRow(
+                        cells: [
+                          DataCell(Text(t.name)),
+                          DataCell(Text(t.location)),
+                          DataCell(
+                            Text('₹${t.pricePerHour.toStringAsFixed(0)}'),
                           ),
-                          IconButton(
-                            onPressed: () async {
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Delete turf?'),
-                                  content: Text('Delete ${t.name}? This cannot be undone.'),
-                                  actions: [
-                                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-                                    FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
-                                  ],
+                          DataCell(
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    final updated = await showDialog<Turf>(
+                                      context: context,
+                                      builder: (context) =>
+                                          _TurfDialog(existing: t),
+                                    );
+                                    if (updated != null) {
+                                      await provider.updateTurfItem(updated);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.edit),
                                 ),
-                              );
-                              if (confirm == true) {
-                                await provider.deleteTurfById(t.id);
-                              }
-                            },
-                            icon: const Icon(Icons.delete),
+                                IconButton(
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Delete turf?'),
+                                        content: Text(
+                                          'Delete ${t.name}? This cannot be undone.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          FilledButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, true),
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await provider.deleteTurfById(t.id);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                ),
+                              ],
+                            ),
                           ),
-                        ])),
-                      ]),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -123,8 +142,12 @@ class _TurfDialogState extends State<_TurfDialog> {
     super.initState();
     _name = TextEditingController(text: widget.existing?.name ?? '');
     _location = TextEditingController(text: widget.existing?.location ?? '');
-    _price = TextEditingController(text: widget.existing?.pricePerHour.toString() ?? '');
-    _description = TextEditingController(text: widget.existing?.description ?? '');
+    _price = TextEditingController(
+      text: widget.existing?.pricePerHour.toString() ?? '',
+    );
+    _description = TextEditingController(
+      text: widget.existing?.description ?? '',
+    );
   }
 
   @override
@@ -150,12 +173,14 @@ class _TurfDialogState extends State<_TurfDialog> {
               TextFormField(
                 controller: _name,
                 decoration: const InputDecoration(labelText: 'Name'),
-                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? 'Required' : null,
               ),
               TextFormField(
                 controller: _location,
                 decoration: const InputDecoration(labelText: 'Location'),
-                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? 'Required' : null,
               ),
               TextFormField(
                 controller: _price,
@@ -176,14 +201,20 @@ class _TurfDialogState extends State<_TurfDialog> {
               const SizedBox(height: 8),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Images upload (coming soon)', style: TextStyle(color: Colors.grey)),
+                child: Text(
+                  'Images upload (coming soon)',
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
             ],
           ),
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
         FilledButton(
           onPressed: () {
             if (_formKey.currentState?.validate() != true) return;
@@ -192,7 +223,9 @@ class _TurfDialogState extends State<_TurfDialog> {
               name: _name.text.trim(),
               location: _location.text.trim(),
               pricePerHour: double.parse(_price.text.trim()),
-              description: _description.text.trim().isEmpty ? null : _description.text.trim(),
+              description: _description.text.trim().isEmpty
+                  ? null
+                  : _description.text.trim(),
               images: const [],
             );
             Navigator.pop(context, turf);

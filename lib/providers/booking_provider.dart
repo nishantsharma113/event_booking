@@ -34,8 +34,8 @@ class BookingProvider with ChangeNotifier {
 
   List<Booking> get filteredBookings {
     return bookings.where((b) {
-      if (filterFrom != null && (b.createdAt == null || b.createdAt!.isBefore(filterFrom!))) return false;
-      if (filterTo != null && (b.createdAt == null || b.createdAt!.isAfter(filterTo!))) return false;
+      if (filterFrom != null && (b.bookedAt == null || b.bookedAt!.isBefore(filterFrom!))) return false;
+      if (filterTo != null && (b.bookedAt == null || b.bookedAt!.isAfter(filterTo!))) return false;
       return true;
     }).toList();
   }
@@ -44,7 +44,7 @@ class BookingProvider with ChangeNotifier {
     final now = DateTime.now();
     final buckets = List<double>.filled(12, 0);
     for (final b in filteredBookings) {
-      final created = b.createdAt;
+      final created = b.bookedAt;
       if (created == null) continue;
       final diffMonths = (now.year - created.year) * 12 + (now.month - created.month);
       if (diffMonths >= 0 && diffMonths < 12) {
