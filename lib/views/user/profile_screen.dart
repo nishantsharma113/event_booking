@@ -16,6 +16,12 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            context.canPop() ? context.pop() : context.go('/home');
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: const Text('My Profile'),
         actions: [
           IconButton(
@@ -47,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                 if (context.mounted) context.go('/login');
               }
             },
-          )
+          ),
         ],
       ),
       body: Builder(
@@ -86,7 +92,10 @@ class ProfileScreen extends StatelessWidget {
                         radius: 40,
                         child: Text(
                           initials,
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -97,7 +106,9 @@ class ProfileScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         user.email,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[700],
+                        ),
                       ),
                     ],
                   ),
@@ -109,11 +120,23 @@ class ProfileScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
                       children: [
-                        _InfoTile(icon: Icons.email, label: 'Email', value: user.email),
+                        _InfoTile(
+                          icon: Icons.email,
+                          label: 'Email',
+                          value: user.email,
+                        ),
                         const Divider(height: 0),
-                        _InfoTile(icon: Icons.phone, label: 'Phone', value: user.phone ?? '-'),
+                        _InfoTile(
+                          icon: Icons.phone,
+                          label: 'Phone',
+                          value: user.phone ?? '-',
+                        ),
                         const Divider(height: 0),
-                        _InfoTile(icon: Icons.verified_user, label: 'Role', value: user.role),
+                        _InfoTile(
+                          icon: Icons.verified_user,
+                          label: 'Role',
+                          value: user.role,
+                        ),
                       ],
                     ),
                   ),
@@ -127,7 +150,9 @@ class ProfileScreen extends StatelessWidget {
                       builder: (context) {
                         return AlertDialog(
                           title: const Text('Logout'),
-                          content: const Text('Are you sure you want to logout?'),
+                          content: const Text(
+                            'Are you sure you want to logout?',
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(false),
@@ -164,7 +189,11 @@ class _InfoTile extends StatelessWidget {
   final String label;
   final String value;
 
-  const _InfoTile({required this.icon, required this.label, required this.value});
+  const _InfoTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {

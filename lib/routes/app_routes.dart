@@ -1,3 +1,4 @@
+import 'package:event_booking/views/user/user_booking_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,6 @@ import '../views/auth/splash_screen.dart';
 import '../views/user/home_screen.dart';
 import '../views/user/turf_details_screen.dart';
 import '../views/user/booking_screen.dart';
-import '../views/user/my_bookings_screen.dart';
 import '../views/user/profile_screen.dart';
 
 // Admin screens
@@ -34,8 +34,13 @@ class AppRouter {
         final user = authProvider.currentUser;
         final path = state.uri.toString();
 
-        final isAuthRoute = path == '/login' || path == '/signup' || path == '/splash' || path == '/admin/login';
-        final isAdminSection = path.startsWith('/admin') && path != '/admin/login';
+        final isAuthRoute =
+            path == '/login' ||
+            path == '/signup' ||
+            path == '/splash' ||
+            path == '/admin/login';
+        final isAdminSection =
+            path.startsWith('/admin') && path != '/admin/login';
 
         // Not logged in
         if (user == null) {
@@ -65,7 +70,10 @@ class AppRouter {
         GoRoute(path: '/splash', builder: (context, state) => SplashScreen()),
         GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
         GoRoute(path: '/signup', builder: (context, state) => SignupScreen()),
-        GoRoute(path: '/admin/login', builder: (context, state) => LoginScreen()),
+        GoRoute(
+          path: '/admin/login',
+          builder: (context, state) => LoginScreen(),
+        ),
 
         // User
         GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
@@ -73,17 +81,41 @@ class AppRouter {
           path: '/turf/:id',
           builder: (context, state) => TurfDetailsScreen(),
         ),
-        GoRoute(path: '/bookings', builder: (context, state) => BookingScreen()),
+        GoRoute(
+          path: '/bookings',
+          builder: (context, state) => BookingScreen(),
+        ),
         GoRoute(path: '/profile', builder: (context, state) => ProfileScreen()),
-        GoRoute(path: '/my-bookings', builder: (context, state) => MyBookingsScreen()),
+        GoRoute(
+          path: '/my-bookings',
+          builder: (context, state) => UserBookingScreen(),
+        ),
 
         // Admin
-        GoRoute(path: '/admin/dashboard', builder: (context, state) => AdminDashboard()),
-        GoRoute(path: '/admin/turfs', builder: (context, state) => ManageTurfsScreen()),
-        GoRoute(path: '/admin/slots', builder: (context, state) => ManageSlotsScreen()),
-        GoRoute(path: '/admin/bookings', builder: (context, state) => ManageBookingsScreen()),
-        GoRoute(path: '/admin/users', builder: (context, state) => ManageUsersScreen()),
-        GoRoute(path: '/admin/reports', builder: (context, state) => ReportsScreen()),
+        GoRoute(
+          path: '/admin/dashboard',
+          builder: (context, state) => AdminDashboard(),
+        ),
+        GoRoute(
+          path: '/admin/turfs',
+          builder: (context, state) => ManageTurfsScreen(),
+        ),
+        GoRoute(
+          path: '/admin/slots',
+          builder: (context, state) => ManageSlotsScreen(),
+        ),
+        GoRoute(
+          path: '/admin/bookings',
+          builder: (context, state) => ManageBookingsScreen(),
+        ),
+        GoRoute(
+          path: '/admin/users',
+          builder: (context, state) => ManageUsersScreen(),
+        ),
+        GoRoute(
+          path: '/admin/reports',
+          builder: (context, state) => ReportsScreen(),
+        ),
       ],
     );
   }
