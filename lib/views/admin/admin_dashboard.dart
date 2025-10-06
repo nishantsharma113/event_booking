@@ -1,3 +1,4 @@
+import 'package:event_booking/core/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +72,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: isWideScreen ? 4.0 : 2.5,
+                    childAspectRatio: isWideScreen ? 4.0 : 2.1,
                     children: [
                       _SummaryCard(
                         label: 'Total Turfs',
@@ -441,7 +442,7 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
+      width: context.screenWidth,
       child: OutlinedButton.icon(
         onPressed: onTap,
         icon: Icon(icon),

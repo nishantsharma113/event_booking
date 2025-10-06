@@ -22,17 +22,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkAuthAndRedirect() async {
     // Wait a bit for providers to initialize
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     if (!mounted) return;
-    
-    final authProvider = context.read<AuthProvider>();
+
+    final authProvider =  context.read<AuthProvider>();
     final user = authProvider.currentUser;
-    
+    debugPrint('SplashScreen: currentUser = $user');
     if (user == null) {
+      debugPrint('SplashScreen: No user logged in, redirecting to /login');
       // Not logged in, go to login
       if (mounted) context.go('/login');
     } else {
       // Logged in, redirect based on role
+
       if (mounted) {
         if (user.role == 'admin') {
           context.go('/admin/dashboard');
@@ -52,10 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             const CircularProgressIndicator(),
             const SizedBox(height: 16),
-            Text(
-              'Loading...',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('Loading...', style: Theme.of(context).textTheme.titleMedium),
           ],
         ),
       ),

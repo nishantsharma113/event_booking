@@ -1,5 +1,6 @@
 // Manage turfs screen
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/turf.dart';
@@ -24,7 +25,14 @@ class _ManageTurfsScreenState extends State<ManageTurfsScreen> {
           t.location.toLowerCase().contains(query);
     }).toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Turfs')),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => context.canPop()
+              ? context.canPop()
+              : context.go('/admin/dashboard'),
+        ),
+        title: const Text('Manage Turfs'),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final created = await showDialog<Turf>(
@@ -42,38 +50,42 @@ class _ManageTurfsScreenState extends State<ManageTurfsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Container(
-                  constraints: BoxConstraints(maxWidth: 400),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search turfs...',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search turfs...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0,
+                          horizontal: 16,
+                        ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 16,
-                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchText = value;
+                        });
+                      },
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        searchText = value;
-                      });
-                    },
                   ),
-                ),
-                const SizedBox(width: 12),
-                FilledButton.icon(
-                  onPressed: () => provider.loadTurfs(),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Refresh'),
-                ),
-                const SizedBox(width: 12),
-                if (provider.isLoading) const CircularProgressIndicator(),
-              ],
+                  const SizedBox(width: 12),
+                  provider.isLoading == false
+                      ? IconButton(
+                          onPressed: () => provider.loadTurfs(),
+                          icon: Icon(Icons.refresh),
+                        )
+                      : SizedBox(),
+
+                  const SizedBox(width: 12),
+                  if (provider.isLoading) const CircularProgressIndicator(),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -89,7 +101,7 @@ class _ManageTurfsScreenState extends State<ManageTurfsScreen> {
                                 crossAxisCount: crossAxisCount,
                                 crossAxisSpacing: 16,
                                 mainAxisSpacing: 16,
-                                childAspectRatio: isWide ? 2.8 : 1.7,
+                                childAspectRatio: isWide ? 2.8 : 2.5,
                               ),
                           itemCount: filteredTurfs.length,
                           itemBuilder: (context, idx) {

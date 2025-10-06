@@ -55,7 +55,6 @@ class AuthProvider with ChangeNotifier {
         currentUser = await _authService.getProfile();
       }
     } catch (e) {
-      
       errorMessage = e.toString();
     } finally {
       isLoading = false;
@@ -73,6 +72,7 @@ class AuthProvider with ChangeNotifier {
   // 🔹 Check current session
   Future<void> loadCurrentUser() async {
     currentUser = await _authService.getProfile();
+    debugPrint('AuthProvider: loadCurrentUser = $currentUser');
     notifyListeners();
   }
 

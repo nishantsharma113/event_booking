@@ -78,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   login() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
     try {
       await authProvider.login(
         emailController.text.trim(),

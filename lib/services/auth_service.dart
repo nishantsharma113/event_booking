@@ -5,14 +5,16 @@ class AuthService {
   final supabase = Supabase.instance.client;
 
   // 🔹 Sign up new user
-  Future<AuthResponse> signUp(String email, String password, String name, String phone) async {
+  Future<AuthResponse> signUp(
+    String email,
+    String password,
+    String name,
+    String phone,
+  ) async {
     final response = await supabase.auth.signUp(
       email: email,
       password: password,
-      data: {
-        'name': name,
-        'phone': phone,
-      },
+      data: {'name': name, 'phone': phone},
     );
     return response;
   }
@@ -34,10 +36,14 @@ class AuthService {
   // 🔹 Get current profile
   Future<Profile?> getProfile() async {
     final user = supabase.auth.currentUser;
+
     if (user == null) return null;
 
-    final response =
-        await supabase.from('profiles').select().eq('id', user.id).maybeSingle();
+    final response = await supabase
+        .from('profiles')
+        .select()
+        .eq('id', user.id)
+        .maybeSingle();
 
     if (response == null) return null;
 
@@ -59,7 +65,13 @@ class AuthService {
     await supabase.from('profiles').update({'role': role}).eq('id', userId);
   }
 
-  Future<void> setBlocked({required String userId, required bool blocked}) async {
-    await supabase.from('profiles').update({'blocked': blocked}).eq('id', userId);
+  Future<void> setBlocked({
+    required String userId,
+    required bool blocked,
+  }) async {
+    await supabase
+        .from('profiles')
+        .update({'blocked': blocked})
+        .eq('id', userId);
   }
 }

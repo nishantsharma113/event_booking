@@ -26,7 +26,7 @@ class AppTheme {
     // 🧠 Text Theme
     textTheme: GoogleFonts.poppinsTextTheme().copyWith(
       bodyLarge: const TextStyle(color: textColor),
-      bodyMedium: const TextStyle(color: textColor),
+      bodyMedium: const TextStyle(color: textColor), 
       bodySmall: const TextStyle(color: textColor),
     ),
 
