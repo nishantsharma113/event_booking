@@ -35,16 +35,14 @@ class AppRouter {
         final path = state.uri.toString();
 
         final isAuthRoute =
-            path == '/login' ||
-            path == '/signup' ||
-            path == '/splash' ||
-            path == '/admin/login';
+            path == '/login' || path == '/signup' || path == '/admin/login';
+        final isSplashRoute = path == '/splash';
         final isAdminSection =
             path.startsWith('/admin') && path != '/admin/login';
 
         // Not logged in
         if (user == null) {
-          if (isAuthRoute) return null;
+          if (isAuthRoute || isSplashRoute) return null;
           // If trying to access admin or user pages, send to appropriate login
           if (isAdminSection) return '/admin/login';
           return '/login';
@@ -58,8 +56,13 @@ class AppRouter {
           return '/home';
         }
 
-        // After login routes go to role homes
+        // After login routes go to role homes, but only if on auth routes (not splash)
         if (isAuthRoute) {
+          return isAdmin ? '/admin/dashboard' : '/home';
+        }
+
+        // If logged in and on splash, redirect to home/dashboard only if current location is splash
+        if (isSplashRoute && state.uri.toString() == '/splash') {
           return isAdmin ? '/admin/dashboard' : '/home';
         }
 

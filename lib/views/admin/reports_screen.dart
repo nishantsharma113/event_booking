@@ -1,14 +1,8 @@
 // Reports screen
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
+import 'package:event_booking/core/utils/library.dart';
 import '../../core/utils/web_download_stub.dart'
     if (dart.library.html) '../../core/utils/web_download_web.dart';
 
-import '../../providers/booking_provider.dart';
-import '../../providers/turf_provider.dart';
-import '../../providers/auth_provider.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -32,14 +26,27 @@ class _ReportsScreenState extends State<ReportsScreen> {
     // Push date filters to provider for chart/bookings
     if (bookingProv != null) {
       bookingProv.filterFrom = _from;
-      bookingProv.filterTo = _to == null ? null : DateTime(_to!.year, _to!.month, _to!.day, 23, 59, 59);
+      bookingProv.filterTo = _to == null
+          ? null
+          : DateTime(_to!.year, _to!.month, _to!.day, 23, 59, 59);
     }
 
-    final mostBookedTurfName = _computeMostBookedTurfName(bookingProv, turfProv);
+    final mostBookedTurfName = _computeMostBookedTurfName(
+      bookingProv,
+      turfProv,
+    );
     final activeUsers = authProv?.totalUsers ?? 0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.canPop()
+              ? context.canPop()
+              : context.go('/admin/dashboard'),
+        ),
+        title: const Text('Reports'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
@@ -50,9 +57,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Most Booked Turf', style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      'Most Booked Turf',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     const SizedBox(height: 8),
-                    Text(mostBookedTurfName ?? '—')
+                    Text(mostBookedTurfName ?? '—'),
                   ],
                 ),
               ),
@@ -64,9 +74,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Active Users', style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      'Active Users',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     const SizedBox(height: 12),
-                    Text(activeUsers.toString(), style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      activeUsers.toString(),
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   ],
                 ),
               ),
@@ -78,19 +94,45 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Revenue (Last 12 Months)', style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      'Revenue (Last 12 Months)',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     const SizedBox(height: 12),
                     AspectRatio(
                       aspectRatio: 16 / 6,
                       child: LineChart(
                         LineChartData(
                           titlesData: FlTitlesData(
-                            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (v, m) {
-                              const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
-                              final idx = v.toInt();
-                              return Padding(padding: const EdgeInsets.only(top: 4), child: Text(months[idx % 12]));
-                            })),
-                            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (v, m) {
+                                  const months = [
+                                    'J',
+                                    'F',
+                                    'M',
+                                    'A',
+                                    'M',
+                                    'J',
+                                    'J',
+                                    'A',
+                                    'S',
+                                    'O',
+                                    'N',
+                                    'D',
+                                  ];
+                                  final idx = v.toInt();
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(months[idx % 12]),
+                                  );
+                                },
+                              ),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: true),
+                            ),
                           ),
                           gridData: FlGridData(show: true),
                           borderData: FlBorderData(show: true),
@@ -101,7 +143,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
                               barWidth: 3,
                               dotData: FlDotData(show: false),
                               spots: [
-                                for (final entry in (bookingProv?.computeMonthlyRevenueFiltered() ?? List<double>.filled(12, 0)).asMap().entries)
+                                for (final entry
+                                    in (bookingProv
+                                                ?.computeMonthlyRevenueFiltered() ??
+                                            List<double>.filled(12, 0))
+                                        .asMap()
+                                        .entries)
                                   FlSpot(entry.key.toDouble(), entry.value),
                               ],
                             ),
@@ -123,8 +170,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   items: const [
                     DropdownMenuItem(value: 'All', child: Text('All')),
                     DropdownMenuItem(value: 'pending', child: Text('Pending')),
-                    DropdownMenuItem(value: 'approved', child: Text('Approved')),
-                    DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
+                    DropdownMenuItem(
+                      value: 'approved',
+                      child: Text('Approved'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'cancelled',
+                      child: Text('Cancelled'),
+                    ),
                   ],
                   onChanged: (v) => setState(() => _statusFilter = v ?? 'All'),
                 ),
@@ -147,13 +200,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   onPressed: () async {
                     final picked = await showDatePicker(
                       context: context,
-                      initialDate: _from ?? DateTime.now().subtract(const Duration(days: 30)),
+                      initialDate:
+                          _from ??
+                          DateTime.now().subtract(const Duration(days: 30)),
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2100),
                     );
                     if (picked != null) setState(() => _from = picked);
                   },
-                  child: Text(_from == null ? 'Any' : _from!.toString().substring(0, 10)),
+                  child: Text(
+                    _from == null ? 'Any' : _from!.toString().substring(0, 10),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Text('To:'),
@@ -168,7 +225,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     );
                     if (picked != null) setState(() => _to = picked);
                   },
-                  child: Text(_to == null ? 'Any' : _to!.toString().substring(0, 10)),
+                  child: Text(
+                    _to == null ? 'Any' : _to!.toString().substring(0, 10),
+                  ),
                 ),
               ],
             ),
@@ -225,7 +284,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     });
                   },
                   child: const Text('Reset'),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -254,7 +313,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 }
 
-String? _computeMostBookedTurfName(BookingProvider? bookingProv, TurfProvider? turfProv) {
+String? _computeMostBookedTurfName(
+  BookingProvider? bookingProv,
+  TurfProvider? turfProv,
+) {
   if (bookingProv == null || turfProv == null) return null;
   if (bookingProv.bookings.isEmpty) return null;
   final counts = <String, int>{};
@@ -269,20 +331,41 @@ String? _computeMostBookedTurfName(BookingProvider? bookingProv, TurfProvider? t
       bestId = key;
     }
   });
-  final turf = turfProv.turfs.firstWhere((t) => t.id == bestId, orElse: () => turfProv.turfs.isNotEmpty ? turfProv.turfs.first : (throw StateError('no turf')));
+  final turf = turfProv.turfs.firstWhere(
+    (t) => t.id == bestId,
+    orElse: () => turfProv.turfs.isNotEmpty
+        ? turfProv.turfs.first
+        : (throw StateError('no turf')),
+  );
   return turf.name;
 }
 
-String _buildBookingsCsv(BookingProvider? bookingProv, {String statusFilter = 'All', String turfIdFilter = 'All', DateTime? from, DateTime? to}) {
+String _buildBookingsCsv(
+  BookingProvider? bookingProv, {
+  String statusFilter = 'All',
+  String turfIdFilter = 'All',
+  DateTime? from,
+  DateTime? to,
+}) {
   final rows = <String>[];
   rows.add('id,turf_id,user_id,slot_id,status,total_price');
   if (bookingProv != null) {
     for (final b in bookingProv.bookings) {
       if (statusFilter != 'All' && b.status != statusFilter) continue;
       if (turfIdFilter != 'All' && b.turfId != turfIdFilter) continue;
-      if (from != null && (b.bookedAt == null || b.bookedAt!.isBefore(from))) continue;
-      if (to != null && (b.bookedAt == null || b.bookedAt!.isAfter(DateTime(to.year, to.month, to.day, 23, 59, 59)))) continue;
-      rows.add('${b.id},${b.turfId},${b.userId},${b.slotId},${b.status},${b.totalPrice}');
+      if (from != null && (b.bookedAt == null || b.bookedAt!.isBefore(from))) {
+        continue;
+      }
+      if (to != null &&
+          (b.bookedAt == null ||
+              b.bookedAt!.isAfter(
+                DateTime(to.year, to.month, to.day, 23, 59, 59),
+              ))) {
+        continue;
+      }
+      rows.add(
+        '${b.id},${b.turfId},${b.userId},${b.slotId},${b.status},${b.totalPrice}',
+      );
     }
   }
   return rows.join('\n');
@@ -295,12 +378,13 @@ Future<void> _showCsvDialog(BuildContext context, String csv) async {
       title: const Text('Bookings CSV'),
       content: SizedBox(
         width: 600,
-        child: SingleChildScrollView(
-          child: SelectableText(csv),
-        ),
+        child: SingleChildScrollView(child: SelectableText(csv)),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Close'),
+        ),
         FilledButton(
           onPressed: () async {
             await Clipboard.setData(ClipboardData(text: csv));

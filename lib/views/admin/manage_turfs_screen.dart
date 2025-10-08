@@ -1,11 +1,5 @@
 // Manage turfs screen
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-
-import '../../models/turf.dart';
-import '../../providers/turf_provider.dart';
-
+import 'package:event_booking/core/utils/library.dart';
 class ManageTurfsScreen extends StatefulWidget {
   const ManageTurfsScreen({super.key});
 
@@ -93,163 +87,178 @@ class _ManageTurfsScreenState extends State<ManageTurfsScreen> {
                   ? Center(child: Text('No turfs found.'))
                   : LayoutBuilder(
                       builder: (context, constraints) {
-                        final isWide = constraints.maxWidth > 700;
-                        final crossAxisCount = isWide ? 3 : 1;
-                        return GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: isWide ? 2.8 : 2.5,
-                              ),
-                          itemCount: filteredTurfs.length,
-                          itemBuilder: (context, idx) {
+                        return Wrap(
+                          children: List.generate(filteredTurfs.length, (idx) {
                             final t = filteredTurfs[idx];
-                            return Card(
-                              elevation: 2,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: t.images!.isNotEmpty
-                                          ? Image.network(
-                                              t.images!.first,
-                                              width: 70,
-                                              height: 70,
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Container(
-                                              width: 70,
-                                              height: 70,
-                                              color: Colors.grey[200],
-                                              child: const Icon(
-                                                Icons.image,
-                                                size: 36,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Container(
+                                decoration: ShapeDecoration(
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Color(0x0C000000),
+                                      blurRadius: 54,
+                                      offset: Offset(6, 6),
+                                      spreadRadius: 0,
                                     ),
-                                    const SizedBox(width: 20),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 8.0,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         children: [
-                                          Text(
-                                            t.name,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.titleMedium,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            t.location,
-                                            style: TextStyle(
-                                              color: Colors.grey[700],
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
                                             ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                                            child: t.images!.isNotEmpty
+                                                ? Image.network(
+                                                    t.images!.first,
+                                                    width: 70,
+                                                    height: 70,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Container(
+                                                    width: 70,
+                                                    height: 70,
+                                                    color: Colors.grey[200],
+                                                    child: const Icon(
+                                                      Icons.image,
+                                                      size: 36,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
                                           ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            '₹${t.pricePerHour.toStringAsFixed(0)} / hr',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green[800],
+                                          const SizedBox(width: 20),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  t.name,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.titleMedium,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  t.location,
+                                                  style: TextStyle(
+                                                    color: Colors.grey[700],
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  '₹${t.pricePerHour.toStringAsFixed(0)} / hr',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.green[800],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Tooltip(
-                                          message: 'Edit',
-                                          child: IconButton(
-                                            icon: const Icon(Icons.edit),
-                                            onPressed: () async {
-                                              final updated =
-                                                  await showDialog<Turf>(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        _TurfDialog(
-                                                          existing: t,
-                                                        ),
+
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Tooltip(
+                                            message: 'Edit',
+                                            child: TextButton(
+                                              child: const Text('Edit'),
+                                              onPressed: () async {
+                                                final updated =
+                                                    await showDialog<Turf>(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          _TurfDialog(
+                                                            existing: t,
+                                                          ),
+                                                    );
+                                                if (updated != null) {
+                                                  await provider.updateTurfItem(
+                                                    updated,
                                                   );
-                                              if (updated != null) {
-                                                await provider.updateTurfItem(
-                                                  updated,
-                                                );
-                                              }
-                                            },
+                                                }
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                        Tooltip(
-                                          message: 'Delete',
-                                          child: IconButton(
-                                            icon: const Icon(Icons.delete),
-                                            onPressed: () async {
-                                              final confirm = await showDialog<bool>(
-                                                context: context,
-                                                builder: (context) => AlertDialog(
-                                                  title: const Text(
-                                                    'Delete turf?',
-                                                  ),
-                                                  content: Text(
-                                                    'Delete ${t.name}? This cannot be undone.',
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                            context,
-                                                            false,
-                                                          ),
-                                                      child: const Text(
-                                                        'Cancel',
-                                                      ),
+                                          Tooltip(
+                                            message: 'Delete',
+                                            child: TextButton(
+                                              child: const Text('Delete'),
+                                              onPressed: () async {
+                                                final confirm = await showDialog<bool>(
+                                                  context: context,
+                                                  builder: (context) => AlertDialog(
+                                                    title: const Text(
+                                                      'Delete turf?',
                                                     ),
-                                                    FilledButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                            context,
-                                                            true,
-                                                          ),
-                                                      child: const Text(
-                                                        'Delete',
-                                                      ),
+                                                    content: Text(
+                                                      'Delete ${t.name}? This cannot be undone.',
                                                     ),
-                                                  ],
-                                                ),
-                                              );
-                                              if (confirm == true) {
-                                                await provider.deleteTurfById(
-                                                  t.id,
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              context,
+                                                              false,
+                                                            ),
+                                                        child: const Text(
+                                                          'Cancel',
+                                                        ),
+                                                      ),
+                                                      FilledButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              context,
+                                                              true,
+                                                            ),
+                                                        child: const Text(
+                                                          'Delete',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
-                                              }
-                                            },
+                                                if (confirm == true) {
+                                                  await provider.deleteTurfById(
+                                                    t.id,
+                                                  );
+                                                }
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
-                          },
+                          }),
                         );
                       },
                     ),
@@ -308,7 +317,7 @@ class _TurfDialogState extends State<_TurfDialog> {
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            spacing: 10,
+            spacing: 15,
             children: [
               TextFormField(
                 controller: _name,
@@ -339,12 +348,104 @@ class _TurfDialogState extends State<_TurfDialog> {
                 maxLines: 3,
               ),
               const SizedBox(height: 8),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Images upload (coming soon)',
-                  style: TextStyle(color: Colors.grey),
+              if (widget.existing?.images != null &&
+                  widget.existing!.images!.isNotEmpty) ...[
+                Wrap(
+                  spacing: 8,
+                  children: List.generate(widget.existing!.images!.length, (
+                    idx,
+                  ) {
+                    final imgUrl = widget.existing!.images![idx];
+                    return Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            imgUrl,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: Colors.red, size: 20),
+                          onPressed: () {
+                            setState(() {
+                              widget.existing!.images!.removeAt(idx);
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  }),
                 ),
+                const SizedBox(height: 8),
+              ],
+              FutureBuilder<List<String>>(
+                future: null,
+                builder: (context, snapshot) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ElevatedButton.icon(
+                        icon: Icon(Icons.upload),
+                        label: Text('Upload Images'),
+                        onPressed: () async {
+                          // Pick multiple images using image_picker
+                          final picker = ImagePicker();
+                          final pickedFiles = await picker.pickMultiImage();
+                          if (pickedFiles.isNotEmpty) {
+                            // For demonstration, just use the file paths as image URLs
+                            // In a real app, upload these files to a server and get URLs
+                            final newImages = pickedFiles
+                                .map((f) => f.path)
+                                .toList();
+                            setState(() {
+                              if (widget.existing != null) {
+                                widget.existing!.images!.addAll(newImages);
+                              }
+                              // For now, just print or use as needed
+                              // Example: _uploadedImages.addAll(newImages);
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      if (snapshot.hasData && snapshot.data!.isNotEmpty)
+                        Wrap(
+                          spacing: 8,
+                          children: List.generate(snapshot.data!.length, (idx) {
+                            final img = snapshot.data![idx];
+                            return Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    img,
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    // Remove image from list and call setState
+                                  },
+                                ),
+                              ],
+                            );
+                          }),
+                        ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

@@ -15,10 +15,17 @@ class Profile {
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
-        id: json['id'],
-        name: json['name'] ?? '',
-        email: json['email'],
-        phone: json['phone'],
-        role: json['role'],
-      );
+    id: json['id'],
+    name: json['name'] ?? '',
+    email: json['email'],
+    phone: json['phone'],
+    role: json['role'],
+  );
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'email': email,
+    'phone': phone,
+    'role': role,
+  };
 }

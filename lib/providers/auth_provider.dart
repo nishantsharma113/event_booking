@@ -9,9 +9,9 @@ class AuthProvider with ChangeNotifier {
 
   AuthProvider() {
     // Listen to auth state changes and refresh profile accordingly
-    supabase.auth.onAuthStateChange.listen((event) async {
-      await loadCurrentUser();
-    });
+    // supabase.auth.onAuthStateChange.listen((event) async {
+    //     await loadCurrentUser();
+    // });
   }
 
   Profile? currentUser;
@@ -72,7 +72,7 @@ class AuthProvider with ChangeNotifier {
   // 🔹 Check current session
   Future<void> loadCurrentUser() async {
     currentUser = await _authService.getProfile();
-    debugPrint('AuthProvider: loadCurrentUser = $currentUser');
+
     notifyListeners();
   }
 

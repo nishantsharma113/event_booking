@@ -1,8 +1,7 @@
-import 'package:event_booking/core/extensions/context_extension.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+
+
+
+import '../../core/utils/library.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -78,14 +77,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   login() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
+
     try {
       await authProvider.login(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
+
       if (!context.mounted) return;
       if (authProvider.currentUser != null) {
+        StorageUtils.storeData(
+            AppText.userDataKey, json.encode(authProvider.currentUser!.toJson()));
         final isAdmin = authProvider.currentUser!.role == 'admin';
         if (!mounted) return;
         context.go(isAdmin ? '/admin/dashboard' : '/home');

@@ -41,23 +41,43 @@ class ManageUsersScreen extends StatelessWidget {
                   ],
                   rows: [
                     for (final u in authProv.users)
-                      DataRow(cells: [
-                        DataCell(Text(u.name)),
-                        DataCell(Text(u.email)),
-                        DataCell(Text(u.phone ?? '-')),
-                        DataCell(Text(u.role)),
-                        DataCell(Text('—')),
-                        DataCell(Row(children: [
-                          if (u.role == 'admin')
-                            TextButton(onPressed: () => authProv.demoteToUser(u.id), child: const Text('Demote'))
-                          else
-                            TextButton(onPressed: () => authProv.promoteToAdmin(u.id), child: const Text('Promote')),
-                          const SizedBox(width: 8),
-                          TextButton(onPressed: () => authProv.blockUser(u.id), child: const Text('Block')),
-                          const SizedBox(width: 8),
-                          TextButton(onPressed: () => authProv.unblockUser(u.id), child: const Text('Unblock')),
-                        ])),
-                      ]),
+                      DataRow(
+                        cells: [
+                          DataCell(Text(u.name)),
+                          DataCell(Text(u.email)),
+                          DataCell(Text(u.phone ?? '-')),
+                          DataCell(Text(u.role)),
+                          DataCell(Text('—')),
+                          DataCell(
+                            Row(
+                              children: [
+                                if (u.role == 'admin')
+                                  TextButton(
+                                    onPressed: () =>
+                                        authProv.demoteToUser(u.id),
+                                    child: const Text('Demote'),
+                                  )
+                                else
+                                  TextButton(
+                                    onPressed: () =>
+                                        authProv.promoteToAdmin(u.id),
+                                    child: const Text('Promote'),
+                                  ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: () => authProv.blockUser(u.id),
+                                  child: const Text('Block'),
+                                ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: () => authProv.unblockUser(u.id),
+                                  child: const Text('Unblock'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -68,5 +88,3 @@ class ManageUsersScreen extends StatelessWidget {
     );
   }
 }
-
-

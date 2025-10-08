@@ -1,9 +1,5 @@
 // Splash screen
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../providers/auth_provider.dart';
+import '../../core/utils/library.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,7 +21,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    final authProvider =  context.read<AuthProvider>();
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.loadCurrentUser();
     final user = authProvider.currentUser;
     debugPrint('SplashScreen: currentUser = $user');
     if (user == null) {

@@ -1,13 +1,4 @@
-import 'package:event_booking/core/extensions/context_extension.dart';
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:provider/provider.dart';
-import '../../providers/turf_provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/booking_provider.dart';
-import 'package:go_router/go_router.dart';
-import 'admin_profile_screen.dart';
-
+import '../../core/utils/library.dart';
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
 
@@ -72,7 +63,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: isWideScreen ? 4.0 : 2.1,
+                    childAspectRatio: isWideScreen ? 4.0 : 2.0,
                     children: [
                       _SummaryCard(
                         label: 'Total Turfs',
