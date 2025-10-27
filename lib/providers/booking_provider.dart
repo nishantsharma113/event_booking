@@ -52,7 +52,7 @@ class BookingProvider with ChangeNotifier {
         buckets[idx] += b.totalPrice;
       }
     }
-    return buckets;
+    return buckets; 
   }
 
   Future<void> approve(String id) async {
