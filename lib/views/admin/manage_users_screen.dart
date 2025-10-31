@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import 'package:event_booking/core/utils/library.dart';
 
 class ManageUsersScreen extends StatelessWidget {
   const ManageUsersScreen({super.key});
@@ -9,7 +7,14 @@ class ManageUsersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProv = context.watch<AuthProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Users')),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => context.canPop()
+              ? context.canPop()
+              : context.go('/admin/dashboard'),
+        ),
+        title: const Text('Manage Users'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

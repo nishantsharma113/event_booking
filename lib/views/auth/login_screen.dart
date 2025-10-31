@@ -1,6 +1,3 @@
-
-
-
 import '../../core/utils/library.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,11 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 20.0),
                 TextField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(labelText: "Email"),
                 ),
                 SizedBox(height: 20),
                 TextField(
                   controller: passwordController,
+                  keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(
                     labelText: "Password",
                     suffixIcon: IconButton(
@@ -87,7 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!context.mounted) return;
       if (authProvider.currentUser != null) {
         StorageUtils.storeData(
-            AppText.userDataKey, json.encode(authProvider.currentUser!.toJson()));
+          AppText.userDataKey,
+          json.encode(authProvider.currentUser!.toJson()),
+        );
         final isAdmin = authProvider.currentUser!.role == 'admin';
         if (!mounted) return;
         context.go(isAdmin ? '/admin/dashboard' : '/home');

@@ -97,8 +97,8 @@ class AppText {
   static const String change = "Change";
   static const String view = "View";
   static const String manage = "Manage";
-  
 
   // storage key constants
   static const String userDataKey = 'user_data';
+  static const String turfBucketName = 'turf';
 }

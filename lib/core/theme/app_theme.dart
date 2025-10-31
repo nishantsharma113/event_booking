@@ -26,8 +26,13 @@ class AppTheme {
     // 🧠 Text Theme
     textTheme: GoogleFonts.poppinsTextTheme().copyWith(
       bodyLarge: const TextStyle(color: textColor),
-      bodyMedium: const TextStyle(color: textColor), 
+      bodyMedium: const TextStyle(color: textColor),
       bodySmall: const TextStyle(color: textColor),
+      labelLarge: TextStyle(
+        color: textColor,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
     ),
 
     // 📦 Card Theme
@@ -140,6 +145,16 @@ class AppTheme {
       secondary: secondaryColor,
       surface: Color(0xFF1F2937),
     ),
-    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme)
+        .copyWith(
+          bodyLarge: const TextStyle(color: Colors.white),
+          bodyMedium: const TextStyle(color: Colors.white),
+          bodySmall: const TextStyle(color: Colors.white),
+          labelLarge: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
   );
 }

@@ -1,30 +1,50 @@
 // Turf details screen
+
+import 'package:event_booking/core/widgets/custom_image.dart';
+import 'package:event_booking/models/turf.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../providers/turf_provider.dart';
 
 class TurfDetailsScreen extends StatelessWidget {
-  const TurfDetailsScreen({super.key});
+  final String turfId;
+  const TurfDetailsScreen({super.key, required this.turfId});
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<TurfProvider>();
+
+    final turf = provider.getTurfById(turfId);
+
     final isWide = MediaQuery.of(context).size.width >= 900;
     return Scaffold(
-      appBar: AppBar(title: const Text('Turf Details')),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            context.canPop() ? context.pop() : context.go('/home');
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
+        title: const Text('Turf Details'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: isWide
             ? Row(
                 children: [
-                  Expanded(child: _ImagesCarousel()),
+                  Expanded(child: _ImagesCarousel(turf: turf)),
                   const SizedBox(width: 24),
-                  const Expanded(child: _DetailsPanel()),
+                  Expanded(child: _DetailsPanel(turf: turf)),
                 ],
               )
             : ListView(
                 children: [
-                  _ImagesCarousel(),
+                  turf!.images!.isNotEmpty
+                      ? _ImagesCarousel(turf: turf)
+                      : SizedBox.shrink(),
                   const SizedBox(height: 16),
-                  const _DetailsPanel(),
+                  _DetailsPanel(turf: turf),
                 ],
               ),
       ),
@@ -43,16 +63,18 @@ class TurfDetailsScreen extends StatelessWidget {
 }
 
 class _ImagesCarousel extends StatelessWidget {
+  final Turf? turf;
+  const _ImagesCarousel({required this.turf});
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: PageView.builder(
-        itemCount: 3,
+        itemCount: turf?.images!.length,
         itemBuilder: (_, i) => Container(
           margin: const EdgeInsets.only(right: 8),
           color: Colors.green.shade100,
-          child: const Center(child: Icon(Icons.image, size: 64)),
+          child: Center(child: CustomImage(imagePath: turf!.images![i])),
         ),
       ),
     );
@@ -60,28 +82,65 @@ class _ImagesCarousel extends StatelessWidget {
 }
 
 class _DetailsPanel extends StatelessWidget {
-  const _DetailsPanel();
+  final Turf? turf;
+  const _DetailsPanel({required this.turf});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Green Field Arena', style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          turf?.name ?? 'Turf Name',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 8),
-        Row(children: const [Icon(Icons.place, size: 16), SizedBox(width: 4), Text('Downtown City')]),
+        Row(
+          children: [
+            Icon(Icons.place, size: 16),
+            SizedBox(width: 4),
+            Text(turf?.location ?? 'Turf Location'),
+          ],
+        ),
         const SizedBox(height: 8),
-        Row(children: const [Icon(Icons.star, color: Colors.amber, size: 16), SizedBox(width: 4), Text('4.6')]),
+        Row(
+          children: const [
+            Icon(Icons.star, color: Colors.amber, size: 16),
+            SizedBox(width: 4),
+            Text('4.6'),
+          ],
+        ),
         const SizedBox(height: 16),
-        const Text('Description'),
+        Text('Description', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
-        const Text('Well-maintained turf with night lights and locker rooms.'),
+        Text(turf?.description ?? 'Turf Description'),
         const SizedBox(height: 16),
-        const Text('Available Slots'),
+        Text('Available Slots', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
-        Wrap(spacing: 8, runSpacing: 8, children: List.generate(8, (i) => Chip(label: Text('${10 + i}:00')))),
+        Consumer<TurfProvider>(
+          builder: (context, ref, _) {
+            final slots = context.read<TurfProvider>().getSlot();
+            return Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(
+                slots.length,
+                (index) => InkWell(
+                  onTap: () {
+                    context.read<TurfProvider>().selectSlots(slots[index]);
+                  },
+                  child: Chip(
+                    backgroundColor: ref.selectSlotList.contains(slots[index])
+                        ? Colors.green
+                        : Colors.grey.shade200,
+                    label: Text(slots[index]),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
 }
-

@@ -1,4 +1,5 @@
 // User home screen
+import 'package:event_booking/core/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _searchController.addListener(() {
       setState(() => _searchQuery = _searchController.text.toLowerCase());
     });
-    
+
     // Load turfs when home screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TurfProvider>().loadTurfs();
@@ -43,7 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
     var turfs = turfProvider.turfs.where((turf) {
       // Search filter
       if (_searchQuery.isNotEmpty) {
-        final matchesSearch = turf.name.toLowerCase().contains(_searchQuery) ||
+        final matchesSearch =
+            turf.name.toLowerCase().contains(_searchQuery) ||
             turf.location.toLowerCase().contains(_searchQuery) ||
             (turf.description?.toLowerCase().contains(_searchQuery) ?? false);
         if (!matchesSearch) return false;
@@ -118,9 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Active filters
-            if (_searchQuery.isNotEmpty || _maxPrice < 2000 || _sortBy != 'name')
+            if (_searchQuery.isNotEmpty ||
+                _maxPrice < 2000 ||
+                _sortBy != 'name')
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -142,9 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                 ],
               ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Results count
             Text(
               '${_filteredTurfs.length} turfs found',
@@ -166,50 +170,62 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: Text(
                         'Error: ${turfProvider.errorMessage}',
-                        style: TextStyle(color: Colors.red.shade600, fontSize: 12),
+                        style: TextStyle(
+                          color: Colors.red.shade600,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     TextButton(
                       onPressed: () => turfProvider.loadTurfs(),
-                      child: const Text('Retry', style: TextStyle(fontSize: 12)),
+                      child: const Text(
+                        'Retry',
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
                   ],
                 ),
               ),
             const SizedBox(height: 16),
-            
+
             // Turfs grid
             Expanded(
               child: turfProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _filteredTurfs.isEmpty
-                      ? const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.search_off, size: 64, color: Colors.grey),
-                              SizedBox(height: 16),
-                              Text('No turfs found', style: TextStyle(fontSize: 18)),
-                              Text('Try adjusting your search or filters'),
-                            ],
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            'No turfs found',
+                            style: TextStyle(fontSize: 18),
                           ),
-                        )
-                      : GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: isWide ? 1.6 : 0.9,
-                          ),
-                          itemCount: _filteredTurfs.length,
-                          itemBuilder: (context, index) {
-                            final turf = _filteredTurfs[index];
-                            return _TurfCard(
-                              turf: turf,
-                              onTap: () => context.go('/turf/${turf.id}'),
-                            );
+                          Text('Try adjusting your search or filters'),
+                        ],
+                      ),
+                    )
+                  : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: isWide ? 1.6 : 0.9,
+                      ),
+                      itemCount: _filteredTurfs.length,
+                      itemBuilder: (context, index) {
+                        final turf = _filteredTurfs[index];
+                        return _TurfCard(
+                          turf: turf,
+                          onTap: () {
+                            context.read<TurfProvider>().clearSlots();
+                            context.go('/turf/${turf.id}');
                           },
-                        ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -222,13 +238,18 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.event_note_outlined), label: 'Bookings'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
+          NavigationDestination(
+            icon: Icon(Icons.event_note_outlined),
+            label: 'Bookings',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
         ],
       ),
     );
   }
-
 
   void _showFilterDialog() {
     showDialog(
@@ -244,15 +265,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Sort options
                 const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Sort by:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Sort by:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   initialValue: _sortBy,
                   items: const [
                     DropdownMenuItem(value: 'name', child: Text('Name A-Z')),
-                    DropdownMenuItem(value: 'price_low', child: Text('Price: Low to High')),
-                    DropdownMenuItem(value: 'price_high', child: Text('Price: High to Low')),
+                    DropdownMenuItem(
+                      value: 'price_low',
+                      child: Text('Price: Low to High'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'price_high',
+                      child: Text('Price: High to Low'),
+                    ),
                     DropdownMenuItem(value: 'rating', child: Text('Rating')),
                   ],
                   onChanged: (value) {
@@ -260,11 +290,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Price filter
                 const Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Max Price:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Max Price:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Slider(
@@ -323,10 +356,7 @@ class _TurfCard extends StatelessWidget {
   final Turf turf;
   final VoidCallback onTap;
 
-  const _TurfCard({
-    required this.turf,
-    required this.onTap,
-  });
+  const _TurfCard({required this.turf, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -340,7 +370,11 @@ class _TurfCard extends StatelessWidget {
             Expanded(
               child: Container(
                 color: Colors.green.shade100,
-                child: const Center(child: Icon(Icons.image, size: 48)),
+                child: Center(
+                  child: turf.images!.isNotEmpty
+                      ? CustomImage(imagePath: turf.images!.first)
+                      : Icon(Icons.image, size: 48),
+                ),
               ),
             ),
             Padding(
@@ -348,13 +382,22 @@ class _TurfCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(turf.name, style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    turf.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(Icons.place, size: 16),
                       const SizedBox(width: 4),
-                      Expanded(child: Text(turf.location, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      Expanded(
+                        child: Text(
+                          turf.location,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                   if (turf.description != null) ...[
@@ -370,12 +413,17 @@ class _TurfCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('₹${turf.pricePerHour.toStringAsFixed(0)}/hr', style: const TextStyle(fontWeight: FontWeight.w600)),
-                      Row(children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 4),
-                        Text(turf.rating.toStringAsFixed(1)),
-                      ]),
+                      Text(
+                        '₹${turf.pricePerHour.toStringAsFixed(0)}/hr',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          Text(turf.rating.toStringAsFixed(1)),
+                        ],
+                      ),
                     ],
                   ),
                 ],

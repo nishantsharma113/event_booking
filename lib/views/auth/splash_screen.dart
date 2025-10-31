@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final authProvider = context.read<AuthProvider>();
     await authProvider.loadCurrentUser();
     final user = authProvider.currentUser;
-    debugPrint('SplashScreen: currentUser = $user');
+    
     if (user == null) {
       debugPrint('SplashScreen: No user logged in, redirecting to /login');
       // Not logged in, go to login

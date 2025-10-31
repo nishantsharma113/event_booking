@@ -82,7 +82,8 @@ class AppRouter {
         GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
         GoRoute(
           path: '/turf/:id',
-          builder: (context, state) => TurfDetailsScreen(),
+          builder: (context, state) =>
+              TurfDetailsScreen(turfId: state.pathParameters['id']!),
         ),
         GoRoute(
           path: '/bookings',

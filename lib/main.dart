@@ -24,8 +24,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TurfProvider()..loadTurfs()),
         ChangeNotifierProvider(create: (_) => BookingProvider()..loadAll()),
         ChangeNotifierProvider(create: (_) => SlotProvider()),
-        // Load users data on admin usage (manual refresh on screen); optional eager load:
-        // context.read<AuthProvider>().loadUsers();
+        
       ],
       child: const MyApp(),
     ),

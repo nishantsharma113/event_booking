@@ -1,9 +1,9 @@
 // Manage slots screen
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:event_booking/core/utils/library.dart';
+
 
 import '../../providers/slot_provider.dart';
-import '../../providers/turf_provider.dart';
+
 import '../../models/slot.dart';
 
 class ManageSlotsScreen extends StatelessWidget {
@@ -18,7 +18,14 @@ class ManageSlotsScreen extends StatelessWidget {
     final monthLabel = '${_monthName(monthStart.month)} ${monthStart.year}';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Slots')),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => context.canPop()
+              ? context.canPop()
+              : context.go('/admin/dashboard'),
+        ),
+        title: const Text('Manage Slots'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -42,10 +49,12 @@ class ManageSlotsScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 FilledButton.icon(
-                  onPressed: slotProv.selectedTurfId == null ? null : () => slotProv.loadSlots(),
+                  onPressed: slotProv.selectedTurfId == null
+                      ? null
+                      : () => slotProv.loadSlots(),
                   icon: const Icon(Icons.refresh),
                   label: const Text('Load'),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -53,16 +62,27 @@ class ManageSlotsScreen extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    final prev = DateTime(monthStart.year, monthStart.month - 1, 1);
+                    final prev = DateTime(
+                      monthStart.year,
+                      monthStart.month - 1,
+                      1,
+                    );
                     slotProv.setMonth(prev);
                     slotProv.loadSlots();
                   },
                   icon: const Icon(Icons.chevron_left),
                 ),
-                Text(monthLabel, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  monthLabel,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 IconButton(
                   onPressed: () {
-                    final next = DateTime(monthStart.year, monthStart.month + 1, 1);
+                    final next = DateTime(
+                      monthStart.year,
+                      monthStart.month + 1,
+                      1,
+                    );
                     slotProv.setMonth(next);
                     slotProv.loadSlots();
                   },
@@ -75,7 +95,8 @@ class ManageSlotsScreen extends StatelessWidget {
                       : () async {
                           final created = await showDialog<Slot>(
                             context: context,
-                            builder: (_) => _SlotDialog(turfId: slotProv.selectedTurfId!),
+                            builder: (_) =>
+                                _SlotDialog(turfId: slotProv.selectedTurfId!),
                           );
                           if (created != null) {
                             await slotProv.addSlot(created);
@@ -95,8 +116,12 @@ class ManageSlotsScreen extends StatelessWidget {
                         for (final s in slotProv.slots)
                           Card(
                             child: ListTile(
-                              title: Text('${s.date.toString().substring(0, 10)}  •  ${s.timeRange}'),
-                              subtitle: Text('₹${s.price.toStringAsFixed(0)}  •  ${s.isBooked ? 'Booked' : 'Available'}'),
+                              title: Text(
+                                '${s.date.toString().substring(0, 10)}  •  ${s.timeRange}',
+                              ),
+                              subtitle: Text(
+                                '₹${s.price.toStringAsFixed(0)}  •  ${s.isBooked ? 'Booked' : 'Available'}',
+                              ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -104,7 +129,10 @@ class ManageSlotsScreen extends StatelessWidget {
                                     onPressed: () async {
                                       final updated = await showDialog<Slot>(
                                         context: context,
-                                        builder: (_) => _SlotDialog(existing: s, turfId: s.turfId),
+                                        builder: (_) => _SlotDialog(
+                                          existing: s,
+                                          turfId: s.turfId,
+                                        ),
                                       );
                                       if (updated != null) {
                                         await slotProv.updateSlotItem(updated);
@@ -118,10 +146,20 @@ class ManageSlotsScreen extends StatelessWidget {
                                         context: context,
                                         builder: (_) => AlertDialog(
                                           title: const Text('Delete slot?'),
-                                          content: const Text('This cannot be undone.'),
+                                          content: const Text(
+                                            'This cannot be undone.',
+                                          ),
                                           actions: [
-                                            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-                                            FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: const Text('Cancel'),
+                                            ),
+                                            FilledButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: const Text('Delete'),
+                                            ),
                                           ],
                                         ),
                                       );
@@ -137,7 +175,7 @@ class ManageSlotsScreen extends StatelessWidget {
                           ),
                       ],
                     ),
-            )
+            ),
           ],
         ),
       ),
@@ -165,8 +203,12 @@ class _SlotDialogState extends State<_SlotDialog> {
   void initState() {
     super.initState();
     _date = widget.existing?.date ?? DateTime.now();
-    _timeRange = TextEditingController(text: widget.existing?.timeRange ?? '10:00 - 11:00');
-    _price = TextEditingController(text: widget.existing?.price.toString() ?? '0');
+    _timeRange = TextEditingController(
+      text: widget.existing?.timeRange ?? '10:00 - 11:00',
+    );
+    _price = TextEditingController(
+      text: widget.existing?.price.toString() ?? '0',
+    );
     _isBooked = widget.existing?.isBooked ?? false;
   }
 
@@ -190,9 +232,7 @@ class _SlotDialogState extends State<_SlotDialog> {
             children: [
               Row(
                 children: [
-                  Expanded(
-                    child: Text('${_date.toLocal()}'.split(' ')[0]),
-                  ),
+                  Expanded(child: Text('${_date.toLocal()}'.split(' ')[0])),
                   TextButton(
                     onPressed: () async {
                       final picked = await showDatePicker(
@@ -204,12 +244,14 @@ class _SlotDialogState extends State<_SlotDialog> {
                       if (picked != null) setState(() => _date = picked);
                     },
                     child: const Text('Pick Date'),
-                  )
+                  ),
                 ],
               ),
               TextFormField(
                 controller: _timeRange,
-                decoration: const InputDecoration(labelText: 'Time Range (e.g., 10:00 - 11:00)'),
+                decoration: const InputDecoration(
+                  labelText: 'Time Range (e.g., 10:00 - 11:00)',
+                ),
                 validator: (v) => v == null || v.isEmpty ? 'Required' : null,
               ),
               TextFormField(
@@ -229,13 +271,16 @@ class _SlotDialogState extends State<_SlotDialog> {
                 title: const Text('Booked'),
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
-              )
+              ),
             ],
           ),
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
         FilledButton(
           onPressed: () {
             if (_formKey.currentState?.validate() != true) return;
@@ -257,6 +302,19 @@ class _SlotDialogState extends State<_SlotDialog> {
 }
 
 String _monthName(int m) {
-  const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const names = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   return names[(m - 1) % 12];
 }

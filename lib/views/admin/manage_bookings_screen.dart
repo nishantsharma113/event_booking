@@ -1,7 +1,5 @@
 // Manage bookings screen
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/booking_provider.dart';
+import 'package:event_booking/core/utils/library.dart';
 
 class ManageBookingsScreen extends StatelessWidget {
   const ManageBookingsScreen({super.key});
@@ -10,7 +8,14 @@ class ManageBookingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.watch<BookingProvider?>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Bookings')),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => context.canPop()
+              ? context.canPop()
+              : context.go('/admin/dashboard'),
+        ),
+        title: const Text('Manage Bookings'),
+      ),
       body: Consumer<BookingProvider>(
         builder: (context, prov, _) {
           if (prov.isLoading) {
@@ -28,18 +33,32 @@ class ManageBookingsScreen extends StatelessWidget {
               ],
               rows: [
                 for (final b in prov.filteredBookings)
-                  DataRow(cells: [
-                    DataCell(Text('#${b.id.substring(0, 6)}')),
-                    DataCell(Text(b.turfId)),
-                    DataCell(Text(b.userId)),
-                    DataCell(Text(b.bookedAt?.toString().substring(0, 19) ?? '-')),
-                    DataCell(Text(b.status)),
-                    DataCell(Row(children: [
-                      TextButton(onPressed: () => prov.approve(b.id), child: const Text('Approve')),
-                      const SizedBox(width: 8),
-                      TextButton(onPressed: () => prov.cancel(b.id), child: const Text('Cancel')),
-                    ])),
-                  ]),
+                  DataRow(
+                    cells: [
+                      DataCell(Text('#${b.id.substring(0, 6)}')),
+                      DataCell(Text(b.turfId)),
+                      DataCell(Text(b.userId)),
+                      DataCell(
+                        Text(b.bookedAt?.toString().substring(0, 19) ?? '-'),
+                      ),
+                      DataCell(Text(b.status)),
+                      DataCell(
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () => prov.approve(b.id),
+                              child: const Text('Approve'),
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton(
+                              onPressed: () => prov.cancel(b.id),
+                              child: const Text('Cancel'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           );

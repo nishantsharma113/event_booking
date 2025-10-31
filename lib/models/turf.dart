@@ -19,12 +19,31 @@ class Turf {
   });
 
   factory Turf.fromJson(Map<String, dynamic> json) => Turf(
-        id: json['id'],
-        name: json['name'],
-        location: json['location'],
-        pricePerHour: (json['price_per_hour'] as num).toDouble(),
-        description: json['description'],
-        images: (json['images'] as List?)?.map((e) => e.toString()).toList(),
-        rating: (json['rating'] ?? 0).toDouble(),
-      );
+    id: json['id'],
+    name: json['name'],
+    location: json['location'],
+    pricePerHour: (json['price_per_hour'] as num).toDouble(),
+    description: json['description'],
+    images: (json['images'] as List?)?.map((e) => e.toString()).toList(),
+    rating: (json['rating'] ?? 0).toDouble(),
+  );
+  copyWith({
+    String? id,
+    String? name,
+    String? location,
+    double? pricePerHour,
+    String? description,
+    List<String>? images,
+    double? rating,
+  }) {
+    return Turf(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      location: location ?? this.location,
+      pricePerHour: pricePerHour ?? this.pricePerHour,
+      description: description ?? this.description,
+      images: images ?? this.images,
+      rating: rating ?? this.rating,
+    );
+  }
 }
